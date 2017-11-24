@@ -57,18 +57,23 @@ def userInfo():
 
 #This will extract the json from the response and returns a the to_address field
 def responseHandling(url):
-	response = requests.get(url)
 	
-	#Puts the response data into a readable dictionary
+	#Gets response from url requests and puts JSON into a readable dictionary	
+	response = requests.get(url)
 	civicResponse = response.json()
-	toAddress = {
-		'name': civicResponse['officials'][0]['name'],
-		'address_line1' : civicResponse['officials'][0]['address'][0]['line1'],
-		'address_state' : civicResponse['officials'][0]['address'][0]['state'],
-		'address_city' : civicResponse['officials'][0]['address'][0]['city'],
-		'address_zip' : civicResponse['officials'][0]['address'][0]['zip']
-	}
-
+	
+	try: 
+		toAddress = {
+			'name': civicResponse['officials'][0]['name'],
+			'address_line1' : civicResponse['officials'][0]['address'][0]['line1'],
+			'address_state' : civicResponse['officials'][0]['address'][0]['state'],
+			'address_city' : civicResponse['officials'][0]['address'][0]['city'],
+			'address_zip' : civicResponse['officials'][0]['address'][0]['zip']
+		}
+	
+	except Exception, e: 
+		return "There was a problem finding a representative with that information.\n Please try again"
+	
 	#Checks for address line 2 and puts an empty placeholder otherwise
 	if 'line2' in civicResponse['officials'][0]['address'][0]:
 		toAddress['address_line2'] = civicResponse['officials'][0]['address'][0]['line2']
@@ -77,15 +82,40 @@ def responseHandling(url):
 
 	return toAddress
 
+#Uses Lob API to create letter
 def lobLetter(fromAddress, toAddress, msg):
-		
+
+	try: 
+		letter = lob.Letter.create(
+			description = "Letter to Representative",
+			to_address = toAddress,
+			from_address = fromAddress,
+			file = '<html style="padding-top: 3in; margin: .5in;">Dear Mr. \
+			{{toName}},<br><br>{{message}}<br><br>Sincerely,<br>{{fromName}}</html>',
+			merge_variables = {
+				'toName': toAddress['name'],
+				'message': msg,
+				'fromName': fromAddress['name']
+			
+			},
+			color = True	
+			)
+	
+	except Exception, e: 
+		return "An error occurred while making your letter. Please try again"	
+
+	return letter["url"]
 
 def main():
-	
+	#Get the from_address content	
 	fromAddress, url, msg = userInfo()
+
+	#Get the to_address content
 	toAddress = responseHandling(url)
-	lobLetter(fromAddress, toAddress, msg)
 
+	#Use Lob API to retrieve a link to the letter
+	letterUrl = lobLetter(fromAddress, toAddress, msg)
+	
+	print("Right click the URL below and open to get your letter!\n")	
+	print(letterUrl)
 main()
-
-
