@@ -4,9 +4,9 @@ This project uses the command line to collect a user's information with Python a
 
 ### Prerequisites
 
-Python3
+Python 3
 
-Run these commands as well to import these libraries
+Run these commands as well to import these libraries if not already installed
 
 ```
 pip install lob
@@ -21,7 +21,6 @@ apiKeys.txt (First Line: Google Civic API key, Second Line: Lob API key)
 letterToRep.py
 
 README.md
-
 ```
 
 ### Example: 
@@ -30,7 +29,7 @@ The user will need to input their name, address, and message they would like to 
 
 The output will contain a link to the letter. From here, right click the link and click open to be directed to a pdf of the letter on your default web browser.
 
-##Command steps at a linux terminal:
+## Command steps at a linux terminal:
 
 ```
 python3 letterToRep.py
@@ -43,10 +42,9 @@ Enter your state: <Your State>
 Enter your Zip Code: <Your zip code>
 Enter your Country: <Your country> 
 Enter the message you'd like to send to a local representative: <Any message>
-
 ``` 
 Right click the URL below and open to get your letter!
+
 [Link to letter PDF]
 
 Thank you for the opportunity to apply by using Lob's actual API! 
-

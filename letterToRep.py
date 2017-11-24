@@ -9,9 +9,9 @@ def userInfo(civicKey):
 	fromAddr1 = input("Enter your address: ")
 	fromAddr2 = input("Enter your address line 2 or press enter: ")
 	fromCity = input("Enter your City: ")
-	fromState = input("Enter your state: ")
-	fromZip = input("Enter your zip: ")
-	fromCountry = input("Enter your country: ")
+	fromState = input("Enter your State: ")
+	fromZip = input("Enter your Zip Code: ")
+	fromCountry = input("Enter your Country: ")
 	message = input("Enter the message you'd like to send to a local representative: ")
 	print()	
 	
