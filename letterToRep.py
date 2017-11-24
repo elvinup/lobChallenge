@@ -3,12 +3,8 @@ import urllib.parse
 import requests
 import json
 
-civicKey = 'AIzaSyDxnEQ6T8FOdxjnFAC7xGp1q8ZNA3kKrjc'
-lob.api_key = 'test_0464d171713c005720c19315945b7000b1b'
-
 #Grabs user information and returns it as a dictionary for from_address, the url, and the message 
-def userInfo():
-	'''
+def userInfo(civicKey):
 	fromName = input("Enter your full name: ")
 	fromAddr1 = input("Enter your address: ")
 	fromAddr2 = input("Enter your address line 2 or press enter: ")
@@ -17,16 +13,7 @@ def userInfo():
 	fromZip = input("Enter your zip: ")
 	fromCountry = input("Enter your country: ")
 	message = input("Enter the message you'd like to send to a local representative: ")
-	'''
-
-	fromName = 'Elvin Uthuppan'
-	fromAddr1 = '2001 Emmett Ct'
-	fromAddr2 = ''
-	fromCity = 'Valparaiso'
-	fromState = 'IN'
-	fromZip = '46385'
-	fromCountry = 'US'
-	message = 'ay waddup'
+	print()	
 	
 	#This will be the address dictionary useful later for creating the lob letter request
 	fromAddress = {
@@ -71,7 +58,7 @@ def responseHandling(url):
 			'address_zip' : civicResponse['officials'][0]['address'][0]['zip']
 		}
 	
-	except Exception, e: 
+	except Exception as e: 
 		return "There was a problem finding a representative with that information.\n Please try again"
 	
 	#Checks for address line 2 and puts an empty placeholder otherwise
@@ -83,7 +70,9 @@ def responseHandling(url):
 	return toAddress
 
 #Uses Lob API to create letter
-def lobLetter(fromAddress, toAddress, msg):
+def lobLetter(fromAddress, toAddress, msg, lobKey):
+	
+	lob.api_key = lobKey	
 
 	try: 
 		letter = lob.Letter.create(
@@ -101,20 +90,25 @@ def lobLetter(fromAddress, toAddress, msg):
 			color = True	
 			)
 	
-	except Exception, e: 
+	except Exception as e: 
 		return "An error occurred while making your letter. Please try again"	
 
 	return letter["url"]
 
 def main():
+
+	keyFile = open('apiKeys.txt', 'r')
+	keys = keyFile.read().split('\n')
+	keyFile.close()	
+	
 	#Get the from_address content	
-	fromAddress, url, msg = userInfo()
+	fromAddress, url, msg = userInfo(keys[0])
 
 	#Get the to_address content
 	toAddress = responseHandling(url)
 
 	#Use Lob API to retrieve a link to the letter
-	letterUrl = lobLetter(fromAddress, toAddress, msg)
+	letterUrl = lobLetter(fromAddress, toAddress, msg, keys[1])
 	
 	print("Right click the URL below and open to get your letter!\n")	
 	print(letterUrl)
